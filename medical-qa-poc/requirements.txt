@@ -1,0 +1,41 @@
+# Core & Data Handling
+numpy
+pandas
+
+# LLM, NLP, LangChain
+langchain
+langchain-community
+langchain-huggingface
+# langchain-openai # Uncomment if OpenAI models are to be used
+transformers
+sentence-transformers
+torch
+spacy
+# Add specific spacy model if needed, e.g., en_core_web_sm (user can install via spacy download)
+
+# Vector Stores
+faiss-cpu # For Hugging Face free tier CPU
+
+# Knowledge Graph
+networkx
+# rebel # Add if REBEL is confirmed and its installation is straightforward
+
+# PDF Processing
+pypdf
+
+# API and Web Framework
+gradio
+python-dotenv
+
+# Wikipedia API
+wikipedia
+
+# Jupyter Environment
+jupyter
+notebook # or jupyterlab
+ipykernel
+
+# Development & Linting (optional for final requirements, good for dev)
+# black
+# flake8
+# pytest
