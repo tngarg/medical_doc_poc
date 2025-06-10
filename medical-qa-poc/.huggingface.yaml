@@ -1,0 +1,6 @@
+sdk: gradio
+app_file: app.py
+# Replace <your-username>/<repo-name> with your actual GitHub repository details
+# Example: repo: git+https://USERNAME:TOKEN@github.com/USERNAME/REPO_NAME.git
+# For public repos: repo: git+https://github.com/USERNAME/REPO_NAME.git
+repo: git+https://github.com/tngarg/medical_doc_poc.git

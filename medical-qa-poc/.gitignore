@@ -1,0 +1,54 @@
+# Bytecode and Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environment and dependency isolation
+env/
+venv/
+.venv/
+Pipfile.lock
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# IDE and editor folders
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS and system files
+.DS_Store
+Thumbs.db
+
+# Data and vector store
+/data/
+vector_store_db/
+*.gml
+*.faiss
+*.pkl
+*.db
+
+# Env files
+.env
+*.env
+
+# Logs and outputs
+*.log
+logs/
+*.tmp
+*.bak
+
+# Models or LLM artifacts
+*.pt
+*.bin
+*.ckpt
+*.onnx
+
+# Gradio cached files
+gradio_cached_examples/
+
+# Hugging Face transformer cache
+~/.cache/huggingface/
