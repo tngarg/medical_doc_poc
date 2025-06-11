@@ -35,6 +35,8 @@ jupyter
 notebook # or jupyterlab
 ipykernel
 
+
+
 # Development & Linting (optional for final requirements, good for dev)
 # black
 # flake8

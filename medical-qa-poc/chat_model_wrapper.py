@@ -1,23 +1,33 @@
 # chat_model_wrapper.py
 
-from transformers.pipelines import pipeline
+import os
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 
 class ChatRefiner:
-    def __init__(self, model_name="mistralai/Mistral-7B-Instruct-v0.2"):
-        # Load a lightweight summarization or response refinement model
-        # You may switch to any Hugging Face model available for deployment
-        self.generator = pipeline("text2text-generation", model=model_name)
+    def __init__(self, model_name="gemini-1.5-flash"):
+        """
+        Initializes the Gemini Pro chat model.
+        """
+        self.api_key = os.getenv("GOOGLE_API_KEY")
+        if not self.api_key:
+            raise ValueError("GOOGLE_API_KEY not set in environment or .env file.")
+        
+        genai.configure(api_key=self.api_key)
+        self.model = genai.GenerativeModel(model_name)
 
     def refine(self, context: str, answer: str) -> str:
         """
-        Refines the agent-generated answer before it's shown to the user.
+        Uses Gemini to improve and clarify the answer text.
 
         Args:
-            context: The user question or conversation context
-            answer: The raw answer returned by the MCP system
+            context: The user’s question or prompt.
+            answer: The original system-generated answer.
 
         Returns:
-            A refined, more conversational and concise response
+            A refined answer as a string.
         """
         prompt = f"""
         You are a helpful assistant. Given the user's question and the system answer,
@@ -29,6 +39,9 @@ class ChatRefiner:
         Improved Answer:
         """
 
-        response = self.generator(prompt, max_new_tokens=150, do_sample=False)
-        print(response)
-        return response
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
+        except Exception as e:
+            print(f"[GeminiRefiner] Error: {e}")
+            return answer  # fallback to raw answer
