@@ -1,11 +1,14 @@
 # Core & Data Handling
 numpy
 pandas
+matplotlib
 
 # LLM, NLP, LangChain
 langchain
 langchain-community
 langchain-huggingface
+
+
 # langchain-openai # Uncomment if OpenAI models are to be used
 transformers
 sentence-transformers
@@ -41,3 +44,4 @@ ipykernel
 # black
 # flake8
 # pytest
+google-generativeai
