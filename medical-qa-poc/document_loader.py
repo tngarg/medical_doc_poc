@@ -1,12 +1,18 @@
 import os
-from langchain_community.document_loaders import PyPDFLoader, TextLoader # Corrected imports
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+# from langchain_community.document_loaders import PyPDFLoader, TextLoader # Corrected imports
+
 import shutil # For cleaning up test directory
+
+from langchain_community.document_loaders import PyPDFLoader, TextLoader, UnstructuredHTMLLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 LOADER_MAPPING = {
     ".txt": (TextLoader, {"encoding": "utf8"}),
-    ".pdf": (PyPDFLoader, {}), # PyPDFLoader uses pypdf by default
+    ".pdf": (PyPDFLoader, {}),
+    ".html": (UnstructuredHTMLLoader, {}),
+    ".htm": (UnstructuredHTMLLoader, {}),
 }
+
 
 class DocumentLoader:
     def __init__(self, data_path: str, chunk_size: int = 1000, chunk_overlap: int = 200):

@@ -7,6 +7,7 @@ matplotlib
 langchain
 langchain-community
 langchain-huggingface
+langchain_community
 
 
 # langchain-openai # Uncomment if OpenAI models are to be used

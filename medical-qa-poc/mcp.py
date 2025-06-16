@@ -135,13 +135,25 @@ class MasterControlProgram:
             return best_response
         else:
             print(f"MCP: No agent met confidence threshold ({self.confidence_threshold}). Using FallbackHandler.")
-            if best_response: # Log the best attempt even if below threshold
-                 print(f"  Best attempt was from {best_response.get('agent_name')} with confidence {highest_confidence}")
+            if best_response:  # Log the best attempt even if below threshold
+                print(f"  Best attempt was from {best_response.get('agent_name')} with confidence {highest_confidence}")
             
+            # Avoid infinite fallback loops
+            if context.get("already_in_fallback"):
+                print("MCP: Already in fallback. Returning default fallback message.")
+                return {
+                    "answer": "No information could be retrieved after all attempts.",
+                    "confidence": 0.01,
+                    "source": "System/Fallback",
+                    "agent_name": "FallbackHandler",
+                    "original_question": question
+                }
+
             fallback_context = {
+                **context,
                 "agent_responses": all_agent_responses,
                 "original_question": question,
-                # "user_history": context.get("user_history") # if you track history
+                "already_in_fallback": True
             }
             return self.fallback_handler.get_fallback_response(question, context=fallback_context)
 

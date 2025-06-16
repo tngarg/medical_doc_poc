@@ -18,11 +18,31 @@ KG_FILE_PATH = os.getenv("KG_FILE_PATH", "./data/medical_kg.gml")
 # --- Initialize Components ---
 vector_store_manager = VectorStoreManager(PERSIST_DIRECTORY)
 vector_store_manager.load_vector_store()
+
 kg_manager = KnowledgeGraphManager(kg_file_path=KG_FILE_PATH)
+
 vs_agent = SimpleVectorStoreAgent(name="VectorStoreAgent", vector_store_manager=vector_store_manager)
 kg_agent = KnowledgeGraphAgent(name="KnowledgeGraphAgent", kg_manager=kg_manager)
+
+# Dummy placeholder fallback to satisfy MCP init
+class DummyFallbackHandler:
+    def get_fallback_response(self, question, context=None):
+        return {
+            "answer": "Temporary fallback.",
+            "confidence": 0.0,
+            "source": "Dummy",
+            "agent_name": "Dummy"
+        }
+
+dummy_fallback = DummyFallbackHandler()
+
+# Create MCP with dummy first
+mcp = MasterControlProgram(agents=[vs_agent, kg_agent], fallback_handler=dummy_fallback, confidence_threshold=0.5)
+
+# Real fallback using MCP reference
 fallback_handler = FallbackHandler()
-mcp = MasterControlProgram(agents=[vs_agent, kg_agent], fallback_handler=fallback_handler, confidence_threshold=0.5)
+mcp.fallback_handler = fallback_handler
+
 chat_refiner = ChatRefiner()
 
 # --- Categorized Sample Questions ---
@@ -54,6 +74,7 @@ def respond(message, chat_history):
     confidence = result.get("confidence", 0.0)
     source = result.get("source", "Unknown")
     agent_name = result.get("agent_name", "Unknown")
+    reframed = result.get("reframed")
 
     refined_answer = chat_refiner.refine(message, raw_answer)
 
@@ -64,7 +85,8 @@ def respond(message, chat_history):
     }
     agent_label = agent_label_map.get(agent_name, agent_name)
 
-    formatted = f"{refined_answer}\n\n_Solved via: {agent_label} | Source: {source} | Confidence: {confidence:.2f}_"
+    reframed_note = f"\n_Reframed Query: {reframed}_" if reframed else ""
+    formatted = f"{refined_answer}\n\n_Solved via: {agent_label} | Source: {source} | Confidence: {confidence:.2f}"
     chat_history.append((message, formatted))
     return "", chat_history, chat_history
 
@@ -73,16 +95,14 @@ with gr.Blocks(css="""
 body {
     background-color: #f8f8fc;
     margin: 0;
-    overflow-y: auto; /* allow full page scroll */
+    overflow-y: auto;
 }
-
 .gradio-container {
     font-family: 'Segoe UI', sans-serif;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
-
 .sample-btn button {
     background: #e3f2fd;
     border: none;
@@ -111,10 +131,7 @@ body {
     padding-right: 15px;
     overflow-y: auto;
     overflow-x: hidden;
-  
 }
-
-
 .gradio-container h2 { color: #333; margin-bottom: 20px; }
 .gradio-container h3 { color: #555; margin-top: 15px; margin-bottom: 10px; }
 hr { border: 0; height: 1px; background: #eee; margin: 20px 0; }
