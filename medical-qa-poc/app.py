@@ -18,6 +18,7 @@ KG_FILE_PATH = os.getenv("KG_FILE_PATH", "./data/medical_kg.gml")
 # --- Initialize Components ---
 vector_store_manager = VectorStoreManager(PERSIST_DIRECTORY)
 vector_store_manager.load_vector_store()
+# console.log(f"Vector store loaded from {vector_store_manager.load_vector_store()}")
 
 kg_manager = KnowledgeGraphManager(kg_file_path=KG_FILE_PATH)
 
@@ -47,17 +48,17 @@ chat_refiner = ChatRefiner()
 
 # --- Categorized Sample Questions ---
 questions_by_type = {
-    "📚 Embedding-based Questions": [
+    "Embedding-based Questions": [
         "What protocol is followed for extracranial cerebrovascular duplex ultrasound?",
         "Which veins are evaluated in upper extremity mapping for dialysis access?",
         "How is hemodialysis access monitored post-surgery?"
     ],
-    "🧬 Knowledge Graph Questions": [
+    "Knowledge Graph Questions": [
         "What condition does Steal Phenomenon cause?",
         "Which measurement is used to assess stenosis severity?",
         "What artery is required for an arteriovenous fistula?"
     ],
-    "🌀 Fallback Questions": [
+    "Fallback Questions": [
         "How does unicorn plasma enhance dialysis?",
         "Can AI detect emotions in vascular reports?",
         "What is the spiritual impact of duplex imaging?"
@@ -93,7 +94,7 @@ def respond(message, chat_history):
 # --- UI Layout ---
 with gr.Blocks(css="""
 body {
-    background-color: #f8f8fc;
+    background-color: #f0f4fc;
     margin: 0;
     overflow-y: auto;
 }
@@ -102,9 +103,12 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: #f0f4fc;
 }
 .sample-btn button {
-    background: #e3f2fd;
+    background:  #e8f0fe;
+    color: #1a1a1a;
+    border: 1px solid #ccd8e3;
     border: none;
     margin-bottom: 5px;
     border-radius: 6px;
@@ -116,6 +120,10 @@ body {
     white-space: normal;
     max-width: 100%;
     box-sizing: border-box;
+    transition: background-color 0.2s ease-in-out;
+}
+               .sample-btn button:hover {
+    background: #d0e2fc;
 }
 #chatbot {
     height: 75vh;
@@ -123,21 +131,40 @@ body {
     background: white;
     border-radius: 8px;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccd8e3;
 }
-#submit_button { background-color: #92b4ec !important; border: none; }
+#submit_button { background-color: #2F3C7E !important; border: none; }
 #left-panel {
-    border-right: 1px solid #eee;
+    border-right: 1px solid #dde3ea;
     padding-right: 15px;
     overflow-y: auto;
     overflow-x: hidden;
 }
-.gradio-container h2 { color: #333; margin-bottom: 20px; }
-.gradio-container h3 { color: #555; margin-top: 15px; margin-bottom: 10px; }
-hr { border: 0; height: 1px; background: #eee; margin: 20px 0; }
+h1, h2, h3, h4, h5, h6 {
+    color: #1a1a1a !important;
+}
+               .gr-markdown h1,
+.gr-markdown h2,
+.gr-markdown h3,
+.gr-markdown h4 {
+    color: #1a1a1a !important;
+    font-weight: bold;
+}
+#header {
+    color: #1a1a1a !important;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.gradio-container h2 { color: #1a1a1a; margin-bottom: 20px; }
+.gradio-container h3 { color: #2f3c7e; margin-top: 15px; margin-bottom: 10px; }
+hr { border: 0; height: 1px; background: #ccc; margin: 20px 0; }
+               
+
 """) as demo:
 
-    gr.Markdown("## 🩺 Medical QA Chat", elem_id="header")
+    gr.Markdown("## Medical QA Chat", elem_id="header")
 
     with gr.Row():
         with gr.Column(scale=1, min_width=250, elem_id="left-panel"):
@@ -145,7 +172,7 @@ hr { border: 0; height: 1px; background: #eee; margin: 20px 0; }
             chat_state = gr.State([])
 
             for category, questions in questions_by_type.items():
-                gr.Markdown(f"### {category}")
+                gr.Markdown(f"### {category}", elem_id="header")
                 with gr.Column():
                     for q in questions:
                         gr.Button(q, elem_classes=["sample-btn"]).click(
@@ -171,4 +198,4 @@ hr { border: 0; height: 1px; background: #eee; margin: 20px 0; }
     question_input.change(fn=lambda x: x, inputs=[question_input], outputs=[user_input])
 
 if __name__ == "__main__":
-    demo.launch(debug=True)
+    demo.launch(share=True)

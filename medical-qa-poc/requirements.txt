@@ -7,7 +7,8 @@ matplotlib
 langchain
 langchain-community
 langchain-huggingface
-langchain_community
+# langchain_community
+chromadb
 
 
 # langchain-openai # Uncomment if OpenAI models are to be used
